@@ -1,32 +1,35 @@
 const int LEFT = 7;
 const int RIGHT = 6;
 int pin_up_list[4] = {7,6,5,4};
-int pin_down_list[4] = {11,10,9,8};
-int pin_all[8] = {11, 10, 9, 8, 7, 6, 5, 4};
-uint8_t analog_pins[4] = {A0, A1, A2, A3};
+int pin_down_list[4] = {12,13,2,8};
+int pwm_pins[4] = {11, 10, 9, 3};
+int pin_all[8] = {13, 12, 8, 7, 6, 5, 4, 2};
 
 void activate() {
   bool going_down = false;
-  int pwm = 128;
+  int pwm = 255;
   int delay_amt = 0;
   for (int pin: pin_up_list) {
       digitalWrite(pin, HIGH);
     }
   while (!going_down) {
     pwm += 0;
-    for (uint8_t pin: analog_pins) {
+    for (int pin: pwm_pins) {
       analogWrite(pin, pwm);
       Serial.println("im spinning");
 
       Serial.println(pin);
     }
     delay_amt++;
-    if (delay_amt / 10 <= 30) {
+    if (delay_amt <= 300) {
       going_down = true;
     }
     delay(100);  
   }
   pwm = 128;
+  while (going_down) {
+
+  }
 
 }
 
@@ -38,16 +41,16 @@ void setup() {
   }
   // other pins
 
-  // analog pins (to control voltage)
-  pinMode(A0, OUTPUT);
-  pinMode(A1, OUTPUT);
-  pinMode(A2, OUTPUT);
-  pinMode(A3, OUTPUT);
+  // PWM pins (to control voltage)
+  pinMode(11, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(9, OUTPUT);
 
   // for the button
-  pinMode(3, INPUT);
+  pinMode(A0, INPUT);
   // for the sensor
-  pinMode(2, INPUT);
+  pinMode(A1, INPUT);
 
   activate();
 }
