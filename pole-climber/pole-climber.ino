@@ -7,28 +7,44 @@ int pin_all[8] = {13, 12, 8, 7, 6, 5, 4, 2};
 
 void activate() {
   bool going_down = false;
-  int pwm = 255;
+  float pwm = 255.0;
   int delay_amt = 0;
   for (int pin: pin_up_list) {
       digitalWrite(pin, HIGH);
     }
   while (!going_down) {
-    pwm += 0;
+    pwm += 0.0;
     for (int pin: pwm_pins) {
       analogWrite(pin, pwm);
-      Serial.println("im spinning");
-
       Serial.println(pin);
     }
+    Serial.println(pwm);
     delay_amt++;
-    if (delay_amt <= 300) {
+    if (delay_amt >= 300) {
       going_down = true;
     }
     delay(100);  
   }
-  pwm = 128;
+  pwm = 0;
+  delay_amt = 0;
+  for (int pin: pin_up_list) {
+    digitalWrite(pin, LOW);
+  }
+  for (int pin: pin_down_list) {
+    digitalWrite(pin, HIGH);
+  }
   while (going_down) {
-
+    pwm += 0.8;
+    for (int pin: pwm_pins) {
+      analogWrite(pin, pwm);
+      Serial.println(pin);
+    }
+    Serial.println(pwm);
+    delay_amt++;
+    if (delay_amt >= 300) {
+      break;
+    }
+    delay(100);
   }
 
 }
