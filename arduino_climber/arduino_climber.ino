@@ -16,23 +16,15 @@ void activate() {
       digitalWrite(pin, HIGH);
     }
   while (!going_down) {
-    long duration;
-    float distance;
-    digitalWrite(trigPin, LOW);
-    delayMicroseconds(2);
-    digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
-    duration = pulseIn(echoPin, HIGH);
-    distance = duration * 0.034 / 2;
     pwm += 0.0;
+    Serial.println("im on");
     for (int pin: pwm_pins) {
       analogWrite(pin, pwm);
     }
     // Serial.println(pwm);
     delay_amt++;
 
-    if (delay_amt >= 300 || distance > 60) {
+    if (analogRead(A1) >= 1) {
       // Serial.print("gkofdg");
       going_down = true;
     }
@@ -47,6 +39,7 @@ void activate() {
     digitalWrite(pin, HIGH);
   }
   while (going_down) {
+    Serial.print("im doing it");
     pwm += 0.8;
     for (int pin: pwm_pins) {
       analogWrite(pin, pwm);
@@ -57,6 +50,7 @@ void activate() {
     }
     delay(100);
   }
+  machine_on = false;
 
 }
 
@@ -80,12 +74,14 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
-  pinMode(A1, INPUT)
+  pinMode(A1, INPUT);
 
 }
 
 void loop() {
-  if (digitalRead(A1) && !machine_on) {
+  Serial.println(analogRead(A1));
+  if (analogRead(A1) >= 1 && !machine_on) {
+    Serial.print("im on");
     activate();
     machine_on = true;
   }
