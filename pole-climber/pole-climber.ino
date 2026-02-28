@@ -15,6 +15,9 @@ void activate() {
   for (int pin: pin_up_list) {
       digitalWrite(pin, HIGH);
     }
+  digitalWrite(7, LOW);
+
+  
   while (!going_down) {
     long duration;
     float distance;
@@ -36,6 +39,7 @@ void activate() {
     if (delay_amt >= 300 || distance < 5) {
       // Serial.print("gkofdg");
       going_down = true;
+      digitalWrite(7, HIGH);
     }
     delay(100);  
   }
@@ -47,8 +51,10 @@ void activate() {
   }
   for (int pin: pin_down_list) {
     digitalWrite(pin, HIGH);
+  digitalWrite(7, LOW);
   }
   while (going_down) {
+    Serial.print("gulp");
     pwm += 0.8;
     for (int pin: pwm_pins) {
       analogWrite(pin, pwm);
@@ -59,6 +65,7 @@ void activate() {
     }
     delay(100);
   }
+  machine_on = false;
 
 }
 
@@ -81,13 +88,14 @@ void setup() {
 
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  pinMode(8, OUTPUT);
+  pinMode(7, OUTPUT);
 
 }
 
 void loop() {
   Serial.println("enrd");
   if (digitalRead(6) && !machine_on) {
+    digitalWrite(7, HIGH);
     activate();
     machine_on = true;
     Serial.print("beep boop");
