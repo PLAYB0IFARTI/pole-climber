@@ -1,9 +1,12 @@
 const int LEFT = 7;
 const int RIGHT = 6;
-int pin_up_list[4] = {7,6,5,4};
-int pin_down_list[4] = {12,13,2,8};
-int pwm_pins[4] = {11, 10, 9, 3};
-int pin_all[8] = {13, 12, 8, 7, 6, 5, 4, 2};
+const int trigPin = A1;
+const int echoPin = A2;
+int pin_down_list[4] = {2, 4, 9, 12};
+int pin_up_list[4] = {3, 5, 10, 11};
+uint16_t pwm_pins[4] = {A6, A5, A4, A3};
+int pin_all[8] = {2, 4, 10, 12, 3, 5, 9, 11};
+bool machine_on = false;
 
 void activate() {
   bool going_down = false;
@@ -13,20 +16,32 @@ void activate() {
       digitalWrite(pin, HIGH);
     }
   while (!going_down) {
+    long duration;
+    float distance;
+    Serial.println(distance);
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    duration = pulseIn(echoPin, HIGH);
+    distance = duration * 0.034 / 2;
     pwm += 0.0;
     for (int pin: pwm_pins) {
       analogWrite(pin, pwm);
-      Serial.println(pin);
     }
-    Serial.println(pwm);
+    // Serial.println(pwm);
     delay_amt++;
-    if (delay_amt >= 300) {
+
+    if (delay_amt >= 300 || distance < 5) {
+      // Serial.print("gkofdg");
       going_down = true;
     }
     delay(100);  
   }
   pwm = 0;
   delay_amt = 0;
+  Serial.print("second phase");
   for (int pin: pin_up_list) {
     digitalWrite(pin, LOW);
   }
@@ -37,9 +52,7 @@ void activate() {
     pwm += 0.8;
     for (int pin: pwm_pins) {
       analogWrite(pin, pwm);
-      Serial.println(pin);
     }
-    Serial.println(pwm);
     delay_amt++;
     if (delay_amt >= 300) {
       break;
@@ -64,16 +77,23 @@ void setup() {
   pinMode(9, OUTPUT);
 
   // for the button
-  pinMode(A0, INPUT);
-  // for the sensor
-  pinMode(A1, INPUT);
+  pinMode(6, INPUT);
 
-  activate();
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(8, OUTPUT);
+
 }
 
 void loop() {
-  if (digitalRead(3)) {
+  Serial.println("enrd");
+  if (digitalRead(6) && !machine_on) {
     activate();
+    machine_on = true;
+    Serial.print("beep boop");
+  }
+  else {
+    // Serial.println("notup");
   }
   
 }
